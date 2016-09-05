@@ -1,0 +1,8 @@
+[package]
+name = "midgar_life"
+version = "0.1.0"
+authors = ["Gabriel Martinez <reitaka@gmail.com>"]
+
+[dependencies]
+cgmath = "^0.9.1"
+midgar = { path = "../midgar-engine/midgar" }
