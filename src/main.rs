@@ -36,6 +36,11 @@ pub struct LifeApp {
 impl LifeApp {
     fn draw_board<S: Surface>(&self, midgar: &Midgar, target: &mut S) {
         for cell in self.board.iter_live_cells() {
+            // TODO: Check that cell is in visible boundary
+            // Don't process negative cells to avoid crashing due to overflow
+            if cell.x < 0 || cell.y < 0 {
+                continue;
+            }
             let x = cell.x as u32 * CELL_SIZE.0;
             let y = cell.y as u32 * CELL_SIZE.1;
             self.shape_renderer.draw_filled_rect(x as f32, y as f32, CELL_SIZE.0 as f32, CELL_SIZE.1 as f32, WHITE,
