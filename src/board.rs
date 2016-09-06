@@ -16,7 +16,7 @@ pub struct LifeBoard {
 
 
 impl Cell {
-    fn new(x: i64, y: i64) -> Self {
+    pub fn new(x: i64, y: i64) -> Self {
         Cell {
             x: x,
             y: y,

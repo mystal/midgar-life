@@ -29,6 +29,8 @@ pub struct LifeApp {
 
     simulate: bool,
     last_step_time: Instant,
+    clearing: bool,
+    selected_cell: Option<board::Cell>,
 }
 
 impl LifeApp {
@@ -60,6 +62,8 @@ impl midgar::App for LifeApp {
 
             simulate: false,
             last_step_time: Instant::now(),
+            clearing: false,
+            selected_cell: None,
         }
     }
 
@@ -69,23 +73,27 @@ impl midgar::App for LifeApp {
             return;
         }
 
-        if midgar.input().was_button_pressed(&Mouse::Left) {
+        self.selected_cell = {
             let (x, y) = midgar.input().mouse_pos();
             let y = SCREEN_SIZE.1 as i32 - y;
             if x >= 0 && y >= 0 {
                 let x = x as u32 / CELL_SIZE.0;
                 let y = y as u32 / CELL_SIZE.1;
-                self.board.set(x as i64, y as i64, true);
+                Some(board::Cell::new(x as i64, y as i64))
+            } else {
+                None
+            }
+        };
+
+        if midgar.input().was_button_pressed(&Mouse::Left) {
+            if let Some(cell) = self.selected_cell {
+                self.clearing = self.board.get(cell.x as i64, cell.y as i64);
             }
         }
 
-        if midgar.input().was_button_pressed(&Mouse::Right) {
-            let (x, y) = midgar.input().mouse_pos();
-            let y = SCREEN_SIZE.1 as i32 - y;
-            if x >= 0 && y >= 0 {
-                let x = x as u32 / CELL_SIZE.0;
-                let y = y as u32 / CELL_SIZE.1;
-                self.board.set(x as i64, y as i64, false);
+        if midgar.input().is_button_held(&Mouse::Left) {
+            if let Some(cell) = self.selected_cell {
+                self.board.set(cell.x as i64, cell.y as i64, !self.clearing);
             }
         }
 
@@ -96,6 +104,10 @@ impl midgar::App for LifeApp {
 
         if midgar.input().was_key_pressed(&KeyCode::S) {
             step_board = true;
+        }
+
+        if midgar.input().was_key_pressed(&KeyCode::C) {
+            self.board.clear();
         }
 
         let last_step_dt = Instant::now() - self.last_step_time;
