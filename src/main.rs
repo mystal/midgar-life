@@ -44,7 +44,7 @@ impl LifeApp {
             let x = cell.x as u32 * CELL_SIZE.0;
             let y = cell.y as u32 * CELL_SIZE.1;
             self.shape_renderer.draw_filled_rect(x as f32, y as f32, CELL_SIZE.0 as f32, CELL_SIZE.1 as f32, WHITE,
-                                                 &self.projection, target);
+                                                 target);
         }
     }
 }
@@ -58,11 +58,13 @@ impl midgar::App for LifeApp {
         b.set(1, 2, true);
         b.set(2, 2, true);
 
+        let projection = cgmath::ortho(0.0, SCREEN_SIZE.0 as f32, 0.0, SCREEN_SIZE.1 as f32, -1.0, 1.0);
+
         LifeApp {
             step_time: Duration::from_millis(STEP_TIME_MS),
 
-            shape_renderer: ShapeRenderer::new(midgar.graphics().display()),
-            projection: cgmath::ortho(0.0, SCREEN_SIZE.0 as f32, 0.0, SCREEN_SIZE.1 as f32, -1.0, 1.0),
+            shape_renderer: ShapeRenderer::new(midgar.graphics().display(), projection),
+            projection: projection,
             board: b,
 
             simulate: false,
