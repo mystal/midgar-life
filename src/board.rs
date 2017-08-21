@@ -1,7 +1,6 @@
-//use rand;
-
 use std::collections::{HashMap, HashSet};
 
+use rand::{self, Rng};
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 pub struct Cell {
@@ -96,13 +95,18 @@ impl LifeBoard {
         self.neighbors.clear();
     }
 
-    //pub fn randomize(&mut self) {
-    //    for i in 0..self.inner.len() {
-    //        let x = i % self.width;
-    //        let y = i / self.width;
-    //        self.set(x, y, rand::random());
-    //    }
-    //}
+    pub fn randomize(&mut self) {
+        use BOARD_SIZE;
+
+        let mut rng = rand::thread_rng();
+
+        // NOTE: Since we don't have a camera, simply randomize cells in the board size.
+        for y in 0..BOARD_SIZE.1 as i64 {
+            for x in 0..BOARD_SIZE.0 as i64 {
+                self.set(x, y, rng.gen());
+            }
+        }
+    }
 
     pub fn step(&mut self) {
         let mut killed = Vec::new();

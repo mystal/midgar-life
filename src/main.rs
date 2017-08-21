@@ -1,10 +1,10 @@
 #![feature(conservative_impl_trait)]
-#![feature(test)]
 
 extern crate cgmath;
 extern crate midgar;
+extern crate rand;
 
-use midgar::{KeyCode, Midgar, Mouse, Surface};
+use midgar::{KeyCode, Midgar, MouseButton, Surface};
 use midgar::graphics::shape::ShapeRenderer;
 
 use std::time::{Duration, Instant};
@@ -75,7 +75,7 @@ impl midgar::App for LifeApp {
     }
 
     fn step(&mut self, midgar: &mut Midgar) {
-        if midgar.input().was_key_pressed(&KeyCode::Escape) {
+        if midgar.input().was_key_pressed(KeyCode::Escape) {
             midgar.set_should_exit();
             return;
         }
@@ -92,29 +92,33 @@ impl midgar::App for LifeApp {
             }
         };
 
-        if midgar.input().was_button_pressed(&Mouse::Left) {
+        if midgar.input().was_button_pressed(MouseButton::Left) {
             if let Some(cell) = self.selected_cell {
                 self.clearing = self.board.get(cell.x as i64, cell.y as i64);
             }
         }
 
-        if midgar.input().is_button_held(&Mouse::Left) {
+        if midgar.input().is_button_held(MouseButton::Left) {
             if let Some(cell) = self.selected_cell {
                 self.board.set(cell.x as i64, cell.y as i64, !self.clearing);
             }
         }
 
         let mut step_board = false;
-        if midgar.input().was_key_pressed(&KeyCode::Space) {
+        if midgar.input().was_key_pressed(KeyCode::Space) {
             self.simulate = !self.simulate;
         }
 
-        if midgar.input().was_key_pressed(&KeyCode::S) {
+        if midgar.input().was_key_pressed(KeyCode::S) {
             step_board = true;
         }
 
-        if midgar.input().was_key_pressed(&KeyCode::C) {
+        if midgar.input().was_key_pressed(KeyCode::C) {
             self.board.clear();
+        }
+
+        if midgar.input().was_key_pressed(KeyCode::R) {
+            self.board.randomize();
         }
 
         let last_step_dt = Instant::now() - self.last_step_time;
